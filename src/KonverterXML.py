@@ -97,14 +97,13 @@ def convert_xml_files():
             delivery_info = ET.SubElement(order, "DELIVERY_INFO")
 
             [shipping_line] = [shipping_line for shipping_line in input_xml.getElementsByTagName('shipping-line')]
-            deliv_name = ""
             shipping_line_title = shipping_line.getElementsByTagName("title")[0].firstChild.data.split(" ")
+            deliv_name = " ".join(shipping_line_title)
+
             for i in range(len(shipping_line_title) - 2):
                 if shipping_line_title[i] == "Din" and shipping_line_title[i + 1] == "Pakkeshop":
                     deliv_name = shipping_line_title[i] + " " + shipping_line_title[i + 1] + " " + shipping_line_title[i + 2]
                     break
-            if deliv_name == "":
-                deliv_name = " ".join(shipping_line_title)
 
             ET.SubElement(delivery_info, "DELIV_NAME").text = deliv_name
             ET.SubElement(delivery_info, "DELIV_COMPANY").text = ""
