@@ -6,6 +6,7 @@ from datetime import datetime
 from xml.dom import minidom
 
 from utils import xml_helper
+from utils.logging_helper import initiate_logger
 
 
 def convert_xml_files():
@@ -161,4 +162,5 @@ def convert_xml_files():
 
 
 if __name__ == "__main__":
+    initiate_logger()
     convert_xml_files()
