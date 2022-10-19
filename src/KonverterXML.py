@@ -117,7 +117,7 @@ def convert_xml_files():
             ET.SubElement(delivery_info, "DELIV_EMAIL").text = ""
             ET.SubElement(delivery_info, "DELIV_EAN").text = ""
         except Exception as e:
-            error = f"Filen '{file}' blev ikke konverteret. Kontroller, at der ikke er andre .xml-filer i mappen end dem, der skal konverteres. Fejlbesked: {e}\n"
+            error = f"Filen '{file}' blev ikke konverteret. Kontroller, at der ikke er andre .xml-filer i mappen end dem, der skal konverteres. Fejlbesked: '{e}'\n"
             logging.error(error)
             raise e
 
