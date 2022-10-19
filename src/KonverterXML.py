@@ -71,9 +71,9 @@ def convert_xml_files():
 
             [billing_adress] = [billing_address for billing_address in input_xml.getElementsByTagName('billing-address')]
             ET.SubElement(customer, "CUST_NAME").text = (
-                    billing_adress.getElementsByTagName("first-name")[0].firstChild.data + " " +
-                    billing_adress.getElementsByTagName("last-name")[0].firstChild.data + " " +
-                    billing_adress.getElementsByTagName("phone")[0].firstChild.data.replace(" ", "")
+                billing_adress.getElementsByTagName("first-name")[0].firstChild.data + " " +
+                billing_adress.getElementsByTagName("last-name")[0].firstChild.data + " " +
+                billing_adress.getElementsByTagName("phone")[0].firstChild.data.replace(" ", "")
             )
             ET.SubElement(customer, "CUST_COMPANY").text = "Cares ApS"
             ET.SubElement(customer, "CUST_ADDRESS").text = "Gammel Strandvej 193 a"
