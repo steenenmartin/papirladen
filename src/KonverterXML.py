@@ -69,11 +69,11 @@ def convert_xml_files():
             ET.SubElement(customer, "CUST_NUM").text = "53794648"
             ET.SubElement(customer, "VAT_REG_NUM").text = ""
 
-            billing_adress = input_xml.getElementsByTagName('billing-address')
+            [billing_adress] = [billing_address for billing_address in input_xml.getElementsByTagName('billing-address')]
             ET.SubElement(customer, "CUST_NAME").text = (
-                    billing_adress[0].getElementsByTagName("first-name")[0].firstChild.data + " " +
-                    billing_adress[0].getElementsByTagName("last-name")[0].firstChild.data + " " +
-                    billing_adress[0].getElementsByTagName("phone")[0].firstChild.data.replace(" ", "")
+                    billing_adress.getElementsByTagName("first-name")[0].firstChild.data + " " +
+                    billing_adress.getElementsByTagName("last-name")[0].firstChild.data + " " +
+                    billing_adress.getElementsByTagName("phone")[0].firstChild.data.replace(" ", "")
             )
             ET.SubElement(customer, "CUST_COMPANY").text = "Cares ApS"
             ET.SubElement(customer, "CUST_ADDRESS").text = "Gammel Strandvej 193 a"
@@ -96,7 +96,7 @@ def convert_xml_files():
             # Create "DELIVERY_INFO"-element
             delivery_info = ET.SubElement(order, "DELIVERY_INFO")
 
-            shipping_line = input_xml.getElementsByTagName('shipping-line')[0]
+            [shipping_line] = [shipping_line for shipping_line in input_xml.getElementsByTagName('shipping-line')]
             deliv_name = ""
             shipping_line_title = shipping_line.getElementsByTagName("title")[0].firstChild.data.split(" ")
             for i in range(len(shipping_line_title) - 2):
@@ -120,7 +120,7 @@ def convert_xml_files():
             ET.SubElement(delivery_info, "DELIV_EMAIL").text = ""
             ET.SubElement(delivery_info, "DELIV_EAN").text = ""
         except Exception as e:
-            error = f"Filen '{file}' blev ikke konverteret. Kontroller, at der ikke er andre .xml-filer i mappen end dem, der skal konverteres.\n"
+            error = f"Filen '{file}' blev ikke konverteret. Kontroller, at der ikke er andre .xml-filer i mappen end dem, der skal konverteres. Fejlbesked: {e}\n"
             logging.error(error)
             raise e
 
