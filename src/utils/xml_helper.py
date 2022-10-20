@@ -10,8 +10,8 @@ class XmlHelper:
         [element] = [element for element in filter(filter_func, self.get_elements_by_tag_name(tag_name))]
         return element
 
-    def get_elements_by_tag_name(self, tag_name):
-        return self.xml.getElementsByTagName(tag_name)
+    def get_elements_by_tag_name(self, tag_name, filter_func=lambda x: True):
+        return list(filter(filter_func, self.xml.getElementsByTagName(tag_name)))
 
     @staticmethod
     def prettify(element, indent='  '):

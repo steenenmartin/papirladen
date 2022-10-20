@@ -135,10 +135,7 @@ def convert_xml_files():
 
         order_lines = ET.SubElement(order, "ORDER_LINES")
 
-        for line_item in input_xml.get_elements_by_tag_name("line-items"):
-            if line_item.parentNode.tagName != 'order':
-                continue
-
+        for line_item in input_xml.get_elements_by_tag_name("line-items", lambda x: x.parentNode.tagName == "order"):
             line_item = XmlHelper(line_item)
 
             order_line = ET.SubElement(order_lines, "ORDERLINE")
