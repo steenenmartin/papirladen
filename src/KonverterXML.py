@@ -71,9 +71,9 @@ def convert_xml_files():
             ET.SubElement(customer, "VAT_REG_NUM").text = ""
 
             ET.SubElement(customer, "CUST_NAME").text = (
+                input_xml.get_element_by_tag_name("phone", lambda x: x.parentNode.tagName == "billing-address").firstChild.data.replace(" ", "") + " " +
                 input_xml.get_element_by_tag_name("first-name", lambda x: x.parentNode.tagName == "billing-address").firstChild.data + " " +
-                input_xml.get_element_by_tag_name("last-name", lambda x: x.parentNode.tagName == "billing-address").firstChild.data + " " +
-                input_xml.get_element_by_tag_name("phone", lambda x: x.parentNode.tagName == "billing-address").firstChild.data.replace(" ", "")
+                input_xml.get_element_by_tag_name("last-name", lambda x: x.parentNode.tagName == "billing-address").firstChild.data
             )
             ET.SubElement(customer, "CUST_COMPANY").text = "Cares ApS"
             ET.SubElement(customer, "CUST_ADDRESS").text = "Gammel Strandvej 193 a"
