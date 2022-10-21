@@ -10,9 +10,8 @@ from utils.logging_helper import initiate_logger
 
 
 def convert_xml_files():
-    output_file_name = "export-ORDERS.xml"
-    all_files = os.listdir("./")
-    xml_files = list(filter(lambda f: f.endswith('.xml') and not f == output_file_name, all_files))
+    all_files = os.listdir("./Import")
+    xml_files = list(filter(lambda f: f.endswith('.xml'), all_files))
 
     # Create output XML tree structure
     order_export = ET.Element('ORDER_EXPORT')
@@ -22,7 +21,7 @@ def convert_xml_files():
     for file in xml_files:
         logging.info(f"Konverterer '{file}'")
         # Read input XML:
-        input_xml = XmlHelper(minidom.parse(file))
+        input_xml = XmlHelper(minidom.parse("./Import/" + file))
         order = ET.SubElement(elements, "ORDER")
 
         # Create "GENERAL"-element
@@ -59,7 +58,8 @@ def convert_xml_files():
 
             # Create "SHIPPING_METHOD"-element
             shipping_method = ET.SubElement(order, "SHIPPING_METHOD")
-            ET.SubElement(shipping_method, "SHIP_METHOD_ID").text = "58"
+            pakkeshop_id = input_xml.get_element_by_tag_name("code", lambda x: x.parentNode.tagName == "shipping-line").split("_")[-1]
+            ET.SubElement(shipping_method, "SHIP_METHOD_ID").text = "55" if pakkeshop_id == "business" else "58"
             ET.SubElement(shipping_method, "SHIP_METHOD_NAME").text = "GLS Pakkeshop - HENT SELV"
             ET.SubElement(shipping_method, "SHIP_METHOD_FEE").text = "37,50"
             ET.SubElement(shipping_method, "SHIP_METHOD_FEE_INCL_VAT").text = "True"
@@ -105,7 +105,7 @@ def convert_xml_files():
             ET.SubElement(delivery_info, "DELIV_NAME").text = deliv_name
             ET.SubElement(delivery_info, "DELIV_COMPANY").text = ""
             ET.SubElement(delivery_info, "DELIV_ADDRESS").text = ""
-            ET.SubElement(delivery_info, "DELIV_ADDRESS_2").text = "Pakkeshop: " + input_xml.get_element_by_tag_name("code", lambda x: x.parentNode.tagName == "shipping-line").split("_")[-1]
+            ET.SubElement(delivery_info, "DELIV_ADDRESS_2").text = "Pakkeshop: " + pakkeshop_id
             ET.SubElement(delivery_info, "DELIV_ZIP_CODE").text = ""
             ET.SubElement(delivery_info, "DELIV_CITY").text = ""
             ET.SubElement(delivery_info, "DELIV_STATE").text = ""
@@ -135,6 +135,9 @@ def convert_xml_files():
         order_lines = ET.SubElement(order, "ORDER_LINES")
 
         for line_item in input_xml.get_elements_by_tag_name("line-item", lambda x: x.parentNode.tagName == "line-items"):
+            if line_item.parentNode.parentNode.tagName != 'fulfillment':
+                continue
+
             line_item = XmlHelper(line_item)
 
             order_line = ET.SubElement(order_lines, "ORDERLINE")
@@ -152,12 +155,26 @@ def convert_xml_files():
 
         logging.info(f"Succes! '{file}' blev konverteret\n")
 
-    logging.info(f"Skriver konverteret xml til '{output_file_name}'\n")
     XmlHelper.prettify(order_export)
-    tree = ET.ElementTree(order_export)
-    tree.write(output_file_name, encoding='iso-8859-1', xml_declaration=True, short_empty_elements=False)
+
+    return ET.ElementTree(order_export)
 
 
 if __name__ == "__main__":
-    initiate_logger()
-    convert_xml_files()
+    output_folder_path = "./Output/"
+    if not os.path.exists(output_folder_path):
+        os.mkdir(output_folder_path)
+
+    initiate_logger(output_folder_path)
+
+    tree = convert_xml_files()
+
+    out_file_name = "export-ORDERS.xml"
+    logging.info(f"Skriver konverteret xml til '{output_folder_path + out_file_name}'\n")
+    tree.write(
+        output_folder_path + out_file_name,
+        encoding='iso-8859-1',
+        xml_declaration=True,
+        short_empty_elements=False
+    )
+
