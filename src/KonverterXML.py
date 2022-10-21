@@ -18,6 +18,11 @@ def convert_xml_files():
     order_export.set("type", "ORDERS")
     elements = ET.SubElement(order_export, "ELEMENTS")
 
+    if not xml_files:
+        error = "Der var ingen xml filer i 'Import'-mappen at konvertere. Programmet stopper."
+        logging.error(error)
+        raise Exception(error)
+
     for file in xml_files:
         logging.info(f"Konverterer '{file}'")
         # Read input XML:
@@ -166,6 +171,11 @@ if __name__ == "__main__":
         os.mkdir(output_folder_path)
 
     initiate_logger(output_folder_path)
+
+    if not os.path.exists("./Import"):
+        error = "Mappen 'Import' eksisterer ikke. Programmet stopper."
+        logging.error(error)
+        raise Exception(error)
 
     tree = convert_xml_files()
 
