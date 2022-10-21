@@ -28,26 +28,25 @@ def convert_xml_files():
         # Create "GENERAL"-element
         general = ET.SubElement(order, "GENERAL")
         try:
-            ET.SubElement(general, "ORDER_ID").text = input_xml.get_element_by_tag_name('order-number').firstChild.data
+            ET.SubElement(general, "ORDER_ID").text = input_xml.get_element_by_tag_name('order-number')
             ET.SubElement(general, "LANGUAGE_ID").text = "26"
 
             created_at_element = input_xml.get_element_by_tag_name('created-at', lambda x: x.parentNode.tagName == "order")
-            created_at = datetime.fromisoformat(created_at_element.firstChild.data)
+            created_at = datetime.fromisoformat(created_at_element)
             ET.SubElement(general, "DATE").text = created_at.strftime("%d-%m-%Y %H:%M:%S")
 
             ET.SubElement(general, "CURRENCY_CODE").text = "DKK"
-            ET.SubElement(general, "ORDER_TOTAL_PRICE").text = ""  # input_xml.getElementsByTagName('total-price')[0].firstChild.data
+            ET.SubElement(general, "ORDER_TOTAL_PRICE").text = ""  # input_xml.getElementsByTagName('total-price')[0]
             ET.SubElement(general, "ORDER_VAT").text = "25"
-            ET.SubElement(general, "TOTAL_WEIGHT").text = f"{float(input_xml.get_element_by_tag_name('total-weight').firstChild.data) / 1000}".replace(".", ",")
+            ET.SubElement(general, "TOTAL_WEIGHT").text = f"{float(input_xml.get_element_by_tag_name('total-weight')) / 1000}".replace(".", ",")
             ET.SubElement(general, "STATE_ID").text = "1"
             ET.SubElement(general, "REFERRER").text = "https://www.papirladen.dk/admin/Modules/Login/Login"
-            note = input_xml.get_element_by_tag_name('note', lambda x: x.parentNode.tagName != "customer")
-            ET.SubElement(general, "CUST_COMMENTS").text = note.firstChild.data if note.firstChild is not None else ""
+            ET.SubElement(general, "CUST_COMMENTS").text = input_xml.get_element_by_tag_name('note', lambda x: x.parentNode.tagName != "customer")
 
             # Create "ADVANCED"-element
             advanced = ET.SubElement(order, "ADVANCED")
             ET.SubElement(advanced, "REFERENCE_NUM").text = ""
-            ET.SubElement(advanced, "IP_ADRESS").text = input_xml.get_element_by_tag_name('browser-ip', lambda x: x.parentNode.tagName == "order").firstChild.data
+            ET.SubElement(advanced, "IP_ADRESS").text = input_xml.get_element_by_tag_name('browser-ip', lambda x: x.parentNode.tagName == "order")
             ET.SubElement(advanced, "DISCOUNT").text = "0,00"
             ET.SubElement(advanced, "LBL_EXPORT_STATE").text = "0"
 
@@ -71,9 +70,9 @@ def convert_xml_files():
             ET.SubElement(customer, "VAT_REG_NUM").text = ""
 
             ET.SubElement(customer, "CUST_NAME").text = (
-                input_xml.get_element_by_tag_name("phone", lambda x: x.parentNode.tagName == "billing-address").firstChild.data.replace(" ", "") + " " +
-                input_xml.get_element_by_tag_name("first-name", lambda x: x.parentNode.tagName == "billing-address").firstChild.data + " " +
-                input_xml.get_element_by_tag_name("last-name", lambda x: x.parentNode.tagName == "billing-address").firstChild.data
+                input_xml.get_element_by_tag_name("phone", lambda x: x.parentNode.tagName == "billing-address").replace(" ", "") + " " +
+                input_xml.get_element_by_tag_name("first-name", lambda x: x.parentNode.tagName == "billing-address") + " " +
+                input_xml.get_element_by_tag_name("last-name", lambda x: x.parentNode.tagName == "billing-address")
             )
             ET.SubElement(customer, "CUST_COMPANY").text = "Cares ApS"
             ET.SubElement(customer, "CUST_ADDRESS").text = "Gammel Strandvej 193 a"
@@ -96,7 +95,7 @@ def convert_xml_files():
             # Create "DELIVERY_INFO"-element
             delivery_info = ET.SubElement(order, "DELIVERY_INFO")
 
-            shipping_line_title = input_xml.get_element_by_tag_name("title", lambda x: x.parentNode.tagName == "shipping-line").firstChild.data.split(" ")
+            shipping_line_title = input_xml.get_element_by_tag_name("title", lambda x: x.parentNode.tagName == "shipping-line").split(" ")
             deliv_name = " ".join(shipping_line_title)
             for i in range(len(shipping_line_title) - 2):
                 if shipping_line_title[i] == "Din" and shipping_line_title[i + 1] == "Pakkeshop":
@@ -106,7 +105,7 @@ def convert_xml_files():
             ET.SubElement(delivery_info, "DELIV_NAME").text = deliv_name
             ET.SubElement(delivery_info, "DELIV_COMPANY").text = ""
             ET.SubElement(delivery_info, "DELIV_ADDRESS").text = ""
-            ET.SubElement(delivery_info, "DELIV_ADDRESS_2").text = "Pakkeshop: " + input_xml.get_element_by_tag_name("code", lambda x: x.parentNode.tagName == "shipping-line").firstChild.data.split("_")[-1]
+            ET.SubElement(delivery_info, "DELIV_ADDRESS_2").text = "Pakkeshop: " + input_xml.get_element_by_tag_name("code", lambda x: x.parentNode.tagName == "shipping-line").split("_")[-1]
             ET.SubElement(delivery_info, "DELIV_ZIP_CODE").text = ""
             ET.SubElement(delivery_info, "DELIV_CITY").text = ""
             ET.SubElement(delivery_info, "DELIV_STATE").text = ""
@@ -135,21 +134,21 @@ def convert_xml_files():
 
         order_lines = ET.SubElement(order, "ORDER_LINES")
 
-        for line_item in input_xml.get_elements_by_tag_name("line-items", lambda x: x.parentNode.tagName == "order"):
+        for line_item in input_xml.get_elements_by_tag_name("line-item", lambda x: x.parentNode.tagName == "line-items"):
             line_item = XmlHelper(line_item)
 
             order_line = ET.SubElement(order_lines, "ORDERLINE")
-            ET.SubElement(order_line, "PROD_NUM").text = line_item.get_element_by_tag_name("sku").firstChild.data
-            ET.SubElement(order_line, "PROD_NAME").text = line_item.get_element_by_tag_name("name").firstChild.data
+            ET.SubElement(order_line, "PROD_NUM").text = line_item.get_element_by_tag_name("sku")
+            ET.SubElement(order_line, "PROD_NAME").text = line_item.get_element_by_tag_name("name")
             ET.SubElement(order_line, "VENDOR_NUM").text = ""
             ET.SubElement(order_line, "VARIANT").text = ""
-            quantity = line_item.get_element_by_tag_name("quantity").firstChild.data
+            quantity = line_item.get_element_by_tag_name("quantity")
             ET.SubElement(order_line, "AMOUNT").text = quantity
-            price = line_item.get_element_by_tag_name("price", lambda x: x.parentNode.tagName == "line-item").firstChild.data
+            price = line_item.get_element_by_tag_name("price", lambda x: x.parentNode.tagName == "line-item")
             ET.SubElement(order_line, "UNIT_PRICE").text = price.replace(".", ",")
             ET.SubElement(order_line, "LINE_TOTAL_PRICE").text = f'{float(quantity) * float(price):.2f}'.replace(".", ",")
             ET.SubElement(order_line, "FILE_URL").text = ""
-            ET.SubElement(order_line, "LINE_VAT").text = f'{float(line_item.get_element_by_tag_name("rate").firstChild.data) * 100:.0f}'
+            ET.SubElement(order_line, "LINE_VAT").text = f'{float(line_item.get_element_by_tag_name("rate")) * 100:.0f}'
 
         logging.info(f"Succes! '{file}' blev konverteret\n")
 

@@ -8,7 +8,11 @@ class XmlHelper:
 
     def get_element_by_tag_name(self, tag_name, filter_func=lambda x: True):
         [element] = [element for element in filter(filter_func, self.get_elements_by_tag_name(tag_name))]
-        return element
+
+        if element.firstChild is None:
+            return ""
+
+        return element.firstChild.data
 
     def get_elements_by_tag_name(self, tag_name, filter_func=lambda x: True):
         return list(filter(filter_func, self.xml.getElementsByTagName(tag_name)))
