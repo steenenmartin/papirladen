@@ -59,7 +59,7 @@ def convert_xml_files():
             # Create "SHIPPING_METHOD"-element
             shipping_method = ET.SubElement(order, "SHIPPING_METHOD")
             pakkeshop_id = input_xml.get_element_by_tag_name("code", lambda x: x.parentNode.tagName == "shipping-line").split("_")[-1]
-            ET.SubElement(shipping_method, "SHIP_METHOD_ID").text = "55" if pakkeshop_id == "business" else "58"
+            ET.SubElement(shipping_method, "SHIP_METHOD_ID").text = "58" if pakkeshop_id.isdigit() else "55"
             ET.SubElement(shipping_method, "SHIP_METHOD_NAME").text = "GLS Pakkeshop - HENT SELV"
             ET.SubElement(shipping_method, "SHIP_METHOD_FEE").text = "37,50"
             ET.SubElement(shipping_method, "SHIP_METHOD_FEE_INCL_VAT").text = "True"
