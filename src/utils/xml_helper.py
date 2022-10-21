@@ -6,7 +6,7 @@ class XmlHelper:
     def __init__(self, xml: Union[Document, Element]):
         self.xml = xml
 
-    def get_element_by_tag_name(self, tag_name, filter_func=lambda x: True):
+    def get_element_by_tag_name(self, tag_name, filter_func=lambda x: True) -> str:
         [element] = [element for element in filter(filter_func, self.get_elements_by_tag_name(tag_name))]
 
         if element.firstChild is None:
@@ -14,7 +14,7 @@ class XmlHelper:
 
         return element.firstChild.data
 
-    def get_elements_by_tag_name(self, tag_name, filter_func=lambda x: True):
+    def get_elements_by_tag_name(self, tag_name, filter_func=lambda x: True) -> list[Element]:
         return list(filter(filter_func, self.xml.getElementsByTagName(tag_name)))
 
     @staticmethod

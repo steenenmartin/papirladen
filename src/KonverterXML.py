@@ -9,7 +9,7 @@ from utils.xml_helper import XmlHelper
 from utils.logging_helper import initiate_logger
 
 
-def convert_xml_files():
+def convert_xml_files() -> ET.ElementTree:
     all_files = os.listdir("./Import")
     xml_files = list(filter(lambda f: f.endswith('.xml'), all_files))
 
