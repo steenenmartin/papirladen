@@ -11,17 +11,17 @@ from utils.logging_helper import initiate_logger
 
 def convert_xml_files() -> ET.ElementTree:
     all_files = os.listdir("./Import")
-    xml_files = list(filter(lambda f: f.endswith('.xml'), all_files))
-
-    # Create output XML tree structure
-    order_export = ET.Element('ORDER_EXPORT')
-    order_export.set("type", "ORDERS")
-    elements = ET.SubElement(order_export, "ELEMENTS")
+    xml_files = [file for file in all_files if file.endswith('.xml')]
 
     if not xml_files:
         error = "Der var ingen xml filer i 'Import'-mappen at konvertere. Programmet stopper."
         logging.error(error)
         raise Exception(error)
+
+    # Create output XML tree structure
+    order_export = ET.Element('ORDER_EXPORT')
+    order_export.set("type", "ORDERS")
+    elements = ET.SubElement(order_export, "ELEMENTS")
 
     for file in xml_files:
         logging.info(f"Konverterer '{file}'")
