@@ -14,9 +14,9 @@ def convert_xml_files() -> ET.ElementTree:
     xml_files = [file for file in all_files if file.endswith('.xml')]
 
     if not xml_files:
-        error = "Der var ingen xml filer i 'Import'-mappen at konvertere. Programmet stopper."
-        logging.error(error)
-        raise Exception(error)
+        error_msg = "Der var ingen xml filer i 'Import'-mappen at konvertere. Programmet stopper."
+        logging.error(error_msg)
+        raise Exception(error_msg)
 
     # Create output XML tree structure
     order_export = ET.Element('ORDER_EXPORT')
@@ -121,8 +121,8 @@ def convert_xml_files() -> ET.ElementTree:
             ET.SubElement(delivery_info, "DELIV_EMAIL").text = ""
             ET.SubElement(delivery_info, "DELIV_EAN").text = ""
         except Exception as e:
-            error = f"Filen '{file}' blev ikke konverteret. Kontroller, at der ikke er andre .xml-filer i mappen end dem, der skal konverteres. Fejlbesked: '{e}'\n"
-            logging.error(error)
+            error_msg = f"Filen '{file}' blev ikke konverteret. Kontroller, at der ikke er andre .xml-filer i mappen end dem, der skal konverteres. Fejlbesked: '{e}'\n"
+            logging.error(error_msg)
             raise e
 
         # Create "CUSTOM_FIELDS"-element
