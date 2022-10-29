@@ -167,15 +167,14 @@ def convert_xml_files() -> ET.ElementTree:
 
 if __name__ == "__main__":
     output_folder_path = "./Output/"
-    if not os.path.exists(output_folder_path):
-        os.mkdir(output_folder_path)
-
     initiate_logger(output_folder_path)
 
     if not os.path.exists("./Import"):
         error = "Mappen 'Import' eksisterer ikke. Programmet stopper."
         logging.error(error)
-        raise Exception(error)
+
+    if not os.path.exists(output_folder_path):
+        os.mkdir(output_folder_path)
 
     tree = convert_xml_files()
 
