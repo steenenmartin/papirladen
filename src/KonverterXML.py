@@ -156,7 +156,7 @@ def convert_xml_files() -> ET.ElementTree:
             ET.SubElement(order_line, "UNIT_PRICE").text = price.replace(".", ",")
             ET.SubElement(order_line, "LINE_TOTAL_PRICE").text = f'{float(quantity) * float(price):.2f}'.replace(".", ",")
             ET.SubElement(order_line, "FILE_URL").text = ""
-            ET.SubElement(order_line, "LINE_VAT").text = f'{float(line_item.get_element_by_tag_name("rate")) * 100:.0f}'
+            ET.SubElement(order_line, "LINE_VAT").text = "25"
 
         logging.info(f"Succes! '{file}' blev konverteret\n")
 
