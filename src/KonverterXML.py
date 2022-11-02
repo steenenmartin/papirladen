@@ -156,7 +156,13 @@ def convert_xml_files() -> ET.ElementTree:
             ET.SubElement(order_line, "UNIT_PRICE").text = price.replace(".", ",")
             ET.SubElement(order_line, "LINE_TOTAL_PRICE").text = f'{float(quantity) * float(price):.2f}'.replace(".", ",")
             ET.SubElement(order_line, "FILE_URL").text = ""
-            ET.SubElement(order_line, "LINE_VAT").text = "25"
+            line_vat = "25"
+            try:
+                line_vat = f'{float(line_item.get_element_by_tag_name("rate")) * 100:.0f}'
+            except Exception as e:
+                logging.error(f'Mangler tax-line på produktnummer {line_item.get_element_by_tag_name("sku")}. Defaulter til 25 %.')
+
+            ET.SubElement(order_line, "LINE_VAT").text = line_vat
 
         logging.info(f"Succes! '{file}' blev konverteret\n")
 
