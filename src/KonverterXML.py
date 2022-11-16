@@ -146,11 +146,11 @@ def convert_xml_files() -> ET.ElementTree:
             line_item = XmlHelper(line_item)
 
             order_line = ET.SubElement(order_lines, "ORDERLINE")
-            ET.SubElement(order_line, "PROD_NUM").text = line_item.get_element_by_tag_name("sku")
-            ET.SubElement(order_line, "PROD_NAME").text = line_item.get_element_by_tag_name("name")
+            ET.SubElement(order_line, "PROD_NUM").text = line_item.get_element_by_tag_name("sku", lambda x: x.parentNode.tagName == "line-item")
+            ET.SubElement(order_line, "PROD_NAME").text = line_item.get_element_by_tag_name("name", lambda x: x.parentNode.tagName == "line-item")
             ET.SubElement(order_line, "VENDOR_NUM").text = ""
             ET.SubElement(order_line, "VARIANT").text = ""
-            quantity = line_item.get_element_by_tag_name("quantity")
+            quantity = line_item.get_element_by_tag_name("quantity", lambda x: x.parentNode.tagName == "line-item")
             ET.SubElement(order_line, "AMOUNT").text = quantity
             price = line_item.get_element_by_tag_name("price", lambda x: x.parentNode.tagName == "line-item")
             ET.SubElement(order_line, "UNIT_PRICE").text = price.replace(".", ",")
@@ -159,7 +159,7 @@ def convert_xml_files() -> ET.ElementTree:
             line_vat = "25"
             try:
                 line_vat = f'{float(line_item.get_element_by_tag_name("rate")) * 100:.0f}'
-            except Exception as e:
+            except:
                 logging.error(f'Mangler tax-line på produktnummer {line_item.get_element_by_tag_name("sku")}. Defaulter til 25 %.')
 
             ET.SubElement(order_line, "LINE_VAT").text = line_vat
