@@ -145,14 +145,17 @@ def convert_xml_files() -> ET.ElementTree:
 
             line_item = XmlHelper(line_item)
 
+            def is_line_item_element(element):
+                return element.parentNode.tagName == "line-item"
+
             order_line = ET.SubElement(order_lines, "ORDERLINE")
-            ET.SubElement(order_line, "PROD_NUM").text = line_item.get_element_by_tag_name("sku", lambda x: x.parentNode.tagName == "line-item")
-            ET.SubElement(order_line, "PROD_NAME").text = line_item.get_element_by_tag_name("name", lambda x: x.parentNode.tagName == "line-item")
+            ET.SubElement(order_line, "PROD_NUM").text = line_item.get_element_by_tag_name("sku", is_line_item_element)
+            ET.SubElement(order_line, "PROD_NAME").text = line_item.get_element_by_tag_name("name", is_line_item_element)
             ET.SubElement(order_line, "VENDOR_NUM").text = ""
             ET.SubElement(order_line, "VARIANT").text = ""
-            quantity = line_item.get_element_by_tag_name("quantity", lambda x: x.parentNode.tagName == "line-item")
+            quantity = line_item.get_element_by_tag_name("quantity", is_line_item_element)
             ET.SubElement(order_line, "AMOUNT").text = quantity
-            price = line_item.get_element_by_tag_name("price", lambda x: x.parentNode.tagName == "line-item")
+            price = line_item.get_element_by_tag_name("price", is_line_item_element)
             ET.SubElement(order_line, "UNIT_PRICE").text = price.replace(".", ",")
             ET.SubElement(order_line, "LINE_TOTAL_PRICE").text = f'{float(quantity) * float(price):.2f}'.replace(".", ",")
             ET.SubElement(order_line, "FILE_URL").text = ""
