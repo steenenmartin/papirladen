@@ -45,7 +45,7 @@ def convert_xml_files() -> ET.ElementTree:
             ET.SubElement(general, "TOTAL_WEIGHT").text = f"{float(input_xml.get_element_by_tag_name('total-weight')) / 1000}".replace(".", ",")
             ET.SubElement(general, "STATE_ID").text = "1"
             ET.SubElement(general, "REFERRER").text = "https://www.papirladen.dk/admin/Modules/Login/Login"
-            ET.SubElement(general, "CUST_COMMENTS").text = input_xml.get_element_by_tag_name('note', lambda x: x.parentNode.tagName != "customer")
+            ET.SubElement(general, "CUST_COMMENTS").text = input_xml.get_element_by_tag_name('note', lambda x: x.parentNode.tagName == "order")
 
             # Create "ADVANCED"-element
             advanced = ET.SubElement(order, "ADVANCED")
