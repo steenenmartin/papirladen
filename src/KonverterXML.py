@@ -63,7 +63,11 @@ def convert_xml_files() -> ET.ElementTree:
 
             # Create "SHIPPING_METHOD"-element
             shipping_method = ET.SubElement(order, "SHIPPING_METHOD")
-            pakkeshop_id = input_xml.get_element_by_tag_name("code", lambda x: x.parentNode.tagName == "shipping-line").split("_")[-1]
+            pakkeshop_id = ""
+            try:
+                pakkeshop_id = input_xml.get_element_by_tag_name("code", lambda x: x.parentNode.tagName == "shipping-line").split("_")[-1]
+            except:
+                pass
             ET.SubElement(shipping_method, "SHIP_METHOD_ID").text = "58" if pakkeshop_id.isdigit() else "55"
             ET.SubElement(shipping_method, "SHIP_METHOD_NAME").text = "GLS Pakkeshop - HENT SELV"
             ET.SubElement(shipping_method, "SHIP_METHOD_FEE").text = "37,50"
@@ -100,26 +104,46 @@ def convert_xml_files() -> ET.ElementTree:
             # Create "DELIVERY_INFO"-element
             delivery_info = ET.SubElement(order, "DELIVERY_INFO")
 
-            shipping_line_title = input_xml.get_element_by_tag_name("title", lambda x: x.parentNode.tagName == "shipping-line").split(" ")
+            shipping_line_title = ""
+            try:
+                shipping_line_title = input_xml.get_element_by_tag_name("title", lambda x: x.parentNode.tagName == "shipping-line").split(" ")
+            except:
+                pass
+
             deliv_name = " ".join(shipping_line_title)
             for i in range(len(shipping_line_title) - 2):
                 if shipping_line_title[i] == "Din" and shipping_line_title[i + 1] == "Pakkeshop":
                     deliv_name = shipping_line_title[i] + " " + shipping_line_title[i + 1] + " " + shipping_line_title[i + 2]
                     break
 
-            ET.SubElement(delivery_info, "DELIV_NAME").text = deliv_name
-            ET.SubElement(delivery_info, "DELIV_COMPANY").text = ""
-            ET.SubElement(delivery_info, "DELIV_ADDRESS").text = ""
-            ET.SubElement(delivery_info, "DELIV_ADDRESS_2").text = "Pakkeshop: " + pakkeshop_id
-            ET.SubElement(delivery_info, "DELIV_ZIP_CODE").text = ""
-            ET.SubElement(delivery_info, "DELIV_CITY").text = ""
-            ET.SubElement(delivery_info, "DELIV_STATE").text = ""
-            ET.SubElement(delivery_info, "DELIV_COUNTRY").text = "Danmark"
-            ET.SubElement(delivery_info, "DELIV_COUNTRY_ISO").text = "DK"
-            ET.SubElement(delivery_info, "DELIV_PHONE").text = ""
-            ET.SubElement(delivery_info, "DELIV_FAX").text = ""
-            ET.SubElement(delivery_info, "DELIV_EMAIL").text = ""
-            ET.SubElement(delivery_info, "DELIV_EAN").text = ""
+            if pakkeshop_id != "":
+                ET.SubElement(delivery_info, "DELIV_NAME").text = deliv_name
+                ET.SubElement(delivery_info, "DELIV_COMPANY").text = ""
+                ET.SubElement(delivery_info, "DELIV_ADDRESS").text = ""
+                ET.SubElement(delivery_info, "DELIV_ADDRESS_2").text = "Pakkeshop: " + pakkeshop_id
+                ET.SubElement(delivery_info, "DELIV_ZIP_CODE").text = ""
+                ET.SubElement(delivery_info, "DELIV_CITY").text = ""
+                ET.SubElement(delivery_info, "DELIV_STATE").text = ""
+                ET.SubElement(delivery_info, "DELIV_COUNTRY").text = "Danmark"
+                ET.SubElement(delivery_info, "DELIV_COUNTRY_ISO").text = "DK"
+                ET.SubElement(delivery_info, "DELIV_PHONE").text = ""
+                ET.SubElement(delivery_info, "DELIV_FAX").text = ""
+                ET.SubElement(delivery_info, "DELIV_EMAIL").text = ""
+                ET.SubElement(delivery_info, "DELIV_EAN").text = ""
+            else:
+                ET.SubElement(delivery_info, "DELIV_NAME").text = input_xml.get_element_by_tag_name("name", lambda x: x.parentNode.tagName == "shipping-address")
+                ET.SubElement(delivery_info, "DELIV_COMPANY").text = input_xml.get_element_by_tag_name("company", lambda x: x.parentNode.tagName == "shipping-address")
+                ET.SubElement(delivery_info, "DELIV_ADDRESS").text = input_xml.get_element_by_tag_name("address1", lambda x: x.parentNode.tagName == "shipping-address")
+                ET.SubElement(delivery_info, "DELIV_ADDRESS_2").text = input_xml.get_element_by_tag_name("address2", lambda x: x.parentNode.tagName == "shipping-address")
+                ET.SubElement(delivery_info, "DELIV_ZIP_CODE").text = input_xml.get_element_by_tag_name("zip", lambda x: x.parentNode.tagName == "shipping-address")
+                ET.SubElement(delivery_info, "DELIV_CITY").text = input_xml.get_element_by_tag_name("city", lambda x: x.parentNode.tagName == "shipping-address")
+                ET.SubElement(delivery_info, "DELIV_STATE").text = ""
+                ET.SubElement(delivery_info, "DELIV_COUNTRY").text = "Danmark"
+                ET.SubElement(delivery_info, "DELIV_COUNTRY_ISO").text = "DK"
+                ET.SubElement(delivery_info, "DELIV_PHONE").text = input_xml.get_element_by_tag_name("phone", lambda x: x.parentNode.tagName == "shipping-address")
+                ET.SubElement(delivery_info, "DELIV_FAX").text = ""
+                ET.SubElement(delivery_info, "DELIV_EMAIL").text = ""
+                ET.SubElement(delivery_info, "DELIV_EAN").text = ""
         except Exception as e:
             error_msg = f"Filen '{file}' blev ikke konverteret. Kontroller, at der ikke er andre .xml-filer i mappen end dem, der skal konverteres. Fejlbesked: '{e}'\n"
             logging.error(error_msg)
