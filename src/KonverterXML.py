@@ -131,10 +131,10 @@ def convert_xml_files() -> ET.ElementTree:
                 ET.SubElement(delivery_info, "DELIV_EMAIL").text = ""
                 ET.SubElement(delivery_info, "DELIV_EAN").text = ""
             else:
-                ET.SubElement(delivery_info, "DELIV_NAME").text = input_xml.get_element_by_tag_name("company", lambda x: x.parentNode.tagName == "shipping-address")
+                ET.SubElement(delivery_info, "DELIV_NAME").text = input_xml.get_element_by_tag_name("company", lambda x: x.parentNode.tagName == "shipping-address") if input_xml.get_element_by_tag_name("company", lambda x: x.parentNode.tagName == "shipping-address") != "" else input_xml.get_element_by_tag_name("name", lambda x: x.parentNode.tagName == "shipping-address")
                 ET.SubElement(delivery_info, "DELIV_COMPANY").text = ""
                 ET.SubElement(delivery_info, "DELIV_ADDRESS").text = input_xml.get_element_by_tag_name("address1", lambda x: x.parentNode.tagName == "shipping-address") + ", " + input_xml.get_element_by_tag_name("address2", lambda x: x.parentNode.tagName == "shipping-address")
-                ET.SubElement(delivery_info, "DELIV_ADDRESS_2").text = input_xml.get_element_by_tag_name("phone", lambda x: x.parentNode.tagName == "shipping-address") + " " + input_xml.get_element_by_tag_name("name", lambda x: x.parentNode.tagName == "shipping-address")
+                ET.SubElement(delivery_info, "DELIV_ADDRESS_2").text = input_xml.get_element_by_tag_name("phone", lambda x: x.parentNode.tagName == "shipping-address").replace(" ", "") + " " + input_xml.get_element_by_tag_name("name", lambda x: x.parentNode.tagName == "shipping-address")
                 ET.SubElement(delivery_info, "DELIV_ZIP_CODE").text = input_xml.get_element_by_tag_name("zip", lambda x: x.parentNode.tagName == "shipping-address")
                 ET.SubElement(delivery_info, "DELIV_CITY").text = input_xml.get_element_by_tag_name("city", lambda x: x.parentNode.tagName == "shipping-address")
                 ET.SubElement(delivery_info, "DELIV_STATE").text = ""
